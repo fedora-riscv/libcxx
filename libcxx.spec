@@ -91,7 +91,7 @@ make install DESTDIR=%{buildroot}
 %{_libdir}/libc++.so
 
 %changelog
-* Wed Mar  1 2016 Tom Callaway <spot@fedoraproject.org> - 3.8.0-5
+* Wed Mar  1 2017 Tom Callaway <spot@fedoraproject.org> - 3.8.0-5
 - bootstrap off
 
 * Thu Jun 09 2016 Dan Horák <dan[at]danny.cz> - 3.8.0-4
