@@ -1,10 +1,10 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
-%global bootstrap 1
+%global bootstrap 0
 
 Name:		libcxx
 Version:	3.8.0
-Release:	4%{?dist}
+Release:	5%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -91,6 +91,9 @@ make install DESTDIR=%{buildroot}
 %{_libdir}/libc++.so
 
 %changelog
+* Wed Mar  1 2016 Tom Callaway <spot@fedoraproject.org> - 3.8.0-5
+- bootstrap off
+
 * Thu Jun 09 2016 Dan Horák <dan[at]danny.cz> - 3.8.0-4
 - exclude Power only in EPEL
 - default to z10 on s390(x)
