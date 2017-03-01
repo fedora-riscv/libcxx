@@ -1,10 +1,10 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
-%global bootstrap 1
+%global bootstrap 0
 
 Name:		libcxx
 Version:	3.8.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -91,6 +91,9 @@ make install DESTDIR=%{buildroot}
 %{_libdir}/libc++.so
 
 %changelog
+* Wed Mar 1 2017 Tom Callaway <spot@fedoraproject.org> - 3.8.1-2
+- bootstrap off
+
 * Fri Aug 26 2016 Tom Callaway <spot@fedoraproject.org> - 3.8.1-1
 - update to 3.8.1
 
