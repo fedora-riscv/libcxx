@@ -4,7 +4,7 @@
 
 Name:		libcxx
 Version:	3.8.0
-Release:	5%{?dist}
+Release:	6%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -64,6 +64,9 @@ cd _build
 %if %{bootstrap} < 1
 	-DLIBCXX_CXX_ABI=libcxxabi \
 	-DLIBCXX_CXX_ABI_INCLUDE_PATHS=%{_includedir} \
+	-DPYTHONINTERP_FOUND=ON \
+	-DPYTHON_EXECUTABLE=%{_bindir}/python3 \
+	-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
 %endif
 %if 0%{?__isa_bits} == 64
 	-DLIBCXX_LIBDIR_SUFFIX:STRING=64 \
@@ -91,6 +94,9 @@ make install DESTDIR=%{buildroot}
 %{_libdir}/libc++.so
 
 %changelog
+* Sat Mar  4 2017 Tom Callaway <spot@fedoraproject.org> - 3.8.0-6
+- fix linker script
+
 * Wed Mar  1 2017 Tom Callaway <spot@fedoraproject.org> - 3.8.0-5
 - bootstrap off
 
