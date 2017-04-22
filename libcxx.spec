@@ -3,8 +3,8 @@
 %global bootstrap 0
 
 Name:		libcxx
-Version:	3.8.1
-Release:	3%{?dist}
+Version:	3.9.1
+Release:	1%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -12,6 +12,7 @@ Source0:	http://llvm.org/releases/%{version}/libcxx-%{version}.src.tar.xz
 BuildRequires:	clang llvm-devel cmake
 %if %{bootstrap} < 1
 BuildRequires:	libcxxabi-devel
+BuildRequires:	python3
 %endif
 # PPC64 (on EL7) doesn't like this code.
 # /builddir/build/BUILD/libcxx-3.8.0.src/include/thread:431:73: error: '(9.223372036854775807e+18 / 1.0e+9)' is not a constant expression
@@ -41,10 +42,13 @@ Requires:	libcxxabi-devel
 mkdir _build
 cd _build
 %ifarch s390 s390x
+%if 0%{?fedora} < 26
 # clang requires z10 at minimum
 # workaround until we change the defaults for Fedora
 %global optflags %(echo %{optflags} | sed 's/-march=z9-109 /-march=z10 /')
 %endif
+%endif
+export LDFLAGS="-Wl,--build-id"
 # Clang in older releases than f24 can't build this code without crashing.
 # So, we use gcc there. But the really old version in RHEL 6 works. Huh.
 %cmake .. \
@@ -94,11 +98,23 @@ make install DESTDIR=%{buildroot}
 %{_libdir}/libc++.so
 
 %changelog
-* Sat Mar 4 2017 Tom Callaway <spot@fedoraproject.org> - 3.8.1-3
-- fix linker script
+* Wed Mar  8 2017 Tom Callaway <spot@fedoraproject.org> - 3.9.1-1
+- update to 3.9.1
 
-* Wed Mar 1 2017 Tom Callaway <spot@fedoraproject.org> - 3.8.1-2
-- bootstrap off
+* Fri Mar  3 2017 Tom Callaway <spot@fedoraproject.org> - 3.9.0-4
+- LIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON
+
+* Wed Mar  1 2017 Tom Callaway <spot@fedoraproject.org> - 3.9.0-3
+- disable bootstrap
+
+* Tue Feb 21 2017 Dan Horák <dan[at]danny.cz> - 3.9.0-2
+- apply s390(x) workaround only in Fedora < 26
+
+* Mon Feb 20 2017 Tom Callaway <spot@fedoraproject.org> - 3.9.0-1
+- update to 3.9.0 (match clang)
+
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.8.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
 * Fri Aug 26 2016 Tom Callaway <spot@fedoraproject.org> - 3.8.1-1
 - update to 3.8.1
