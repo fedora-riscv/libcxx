@@ -3,7 +3,7 @@
 %global bootstrap 0
 
 Name:		libcxx
-Version:	5.0.1
+Version:	5.0.2
 Release:	1%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
@@ -108,6 +108,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Tue May  8 2018 Tom Stellard <tstellar@redhat.com> - 5.0.2-1
+- 5.0.2 Release
+
 * Thu Dec  21 2017 Tom Stellard <tstellar@redhat.com> - 5.0.1-1
 - 5.0.1 Release
 
