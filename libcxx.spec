@@ -7,7 +7,7 @@
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	10.0.0
+Version:	10.0.1
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
@@ -97,6 +97,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Mon Jul 27 2020 sguelton@redhat.com - 10.0.1-1
+- 10.0.1
+
 * Fri Apr 3 2020 sguelton@redhat.com - 10.0.0-1
 - 10.0.0 final
 
