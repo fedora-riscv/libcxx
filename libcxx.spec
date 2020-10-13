@@ -1,8 +1,8 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-%global rc_ver 1
-%global baserelease 0.1
+#%%global rc_ver 1
+%global baserelease 0.2
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -109,6 +109,9 @@ pathfix.py -i %{__python3} -pn \
 
 
 %changelog
+* Tue Oct 13 2020 sguelton@redhat.com - 11.0.0-0.2
+- llvm 11.0.0 - final release
+
 * Tue Aug 11 2020 Tom Stellard <tstellar@redhat.com> - 11.0.0-0.1.rc1
 - 11.0.0-rc1 Release
 
