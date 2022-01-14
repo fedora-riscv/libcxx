@@ -1,7 +1,7 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-%global rc_ver 1
+%global rc_ver 2
 
 %global libcxx_version 13.0.1
 %global libcxx_srcdir libcxx-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
@@ -138,6 +138,9 @@ install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Fri Jan 14 2022 Nikita Popov <npopov@redhat.com> - 13.0.1~rc2-1
+- Update to LLVM 13.0.1rc2
+
 * Wed Jan 12 2022 Nikita Popov <npopov@redhat.com> - 13.0.1~rc1-1
 - Update to LLVM 13.0.1rc1
 
