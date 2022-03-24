@@ -1,9 +1,9 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-#global rc_ver 3
 
-%global libcxx_version 13.0.1
+%global libcxx_version 14.0.0
+#global rc_ver 2
 %global libcxx_srcdir libcxx-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
@@ -17,10 +17,12 @@ Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{libcxx
 Source2:	tstellar-gpg-key.asc
 
 Patch0:		0001-PATCH-libcxx-Remove-monorepo-requirement.patch
+Patch1:		add-llvm-cmake-package.patch
 
 BuildRequires:	gcc-c++ llvm-devel cmake llvm-static ninja-build
-# We need python3-devel for pathfix.py.
+# We need python3-devel for %%py3_shebang_fix
 BuildRequires:  python3-devel
+BuildRequires:  llvm-cmake-devel
 
 # The static libc++ links the static abi library in as well
 BuildRequires:	libcxxabi-static
@@ -64,8 +66,7 @@ Summary:	Static libraries for libcxx
 %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
 %autosetup -n %{libcxx_srcdir} -p2
 
-pathfix.py -i %{__python3} -pn \
-	utils/*.py
+%py3_shebang_fix utils/
 
 %build
 
@@ -80,6 +81,7 @@ common_cmake_flags="\
 	-DPYTHON_EXECUTABLE=%{_bindir}/python3 \
 %endif
 	-DLIBCXX_STANDALONE_BUILD=ON \
+	-DLIBCXX_INCLUDE_BENCHMARKS=OFF \
 	-DCMAKE_BUILD_TYPE=RelWithDebInfo"
 
 # Build the static libc++.a.
@@ -120,7 +122,7 @@ install results-static/libc++.a %{buildroot}/%{_libdir}
 
 # Install header files that libcxxabi needs
 mkdir -p %{buildroot}%{_includedir}/libcxx-internal/
-install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
+install -m 0644 src/include/*.h %{buildroot}%{_includedir}/libcxx-internal/
 
 %files
 %license LICENSE.TXT
@@ -138,6 +140,9 @@ install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Thu Mar 24 2022 Timm Bäder <tbaeder@redhat.com> - 14.0.0-1
+- Update to 14.0.0
+
 * Thu Feb 03 2022 Nikita Popov <npopov@redhat.com> - 13.0.1-1
 - Update to LLVM 13.0.1 final
 

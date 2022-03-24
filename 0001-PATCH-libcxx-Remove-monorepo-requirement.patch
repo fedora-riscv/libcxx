@@ -22,15 +22,15 @@ index 9bf1a02..5348a15 100644
  #===============================================================================
  # Setup Project
  #===============================================================================
-@@ -39,8 +32,6 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR OR LIBCXX_STANDALONE_BUIL
-   set(LIBCXX_STANDALONE_BUILD 1)
-   set(LLVM_LIT_OUTPUT_DIR "${LIBCXX_BINARY_DIR}/bin")
- 
--  # Find the LLVM sources and simulate LLVM CMake options.
--  include(HandleOutOfTreeLLVM)
- endif()
+@@ -39,8 +32,6 @@
+ include(GNUInstallDirs)
  
  if (LIBCXX_STANDALONE_BUILD)
+-  # Find the LLVM sources and simulate LLVM CMake options.
+-  include(HandleOutOfTreeLLVM)
+ 
+   find_package(Python3 COMPONENTS Interpreter)
+   if(NOT Python3_Interpreter_FOUND)
 -- 
 1.8.3.1
 
