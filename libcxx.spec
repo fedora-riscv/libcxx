@@ -8,7 +8,7 @@
 
 Name:		libcxx
 Version:	%{libcxx_version}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -22,7 +22,6 @@ Patch1:		add-llvm-cmake-package.patch
 BuildRequires:	gcc-c++ llvm-devel cmake llvm-static ninja-build
 # We need python3-devel for %%py3_shebang_fix
 BuildRequires:  python3-devel
-BuildRequires:  llvm-cmake-devel
 
 # The static libc++ links the static abi library in as well
 BuildRequires:	libcxxabi-static
@@ -140,6 +139,9 @@ install -m 0644 src/include/*.h %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Fri Apr 29 2022 Timm Bäder <tbaeder@redhat.com> - 14.0.0-2
+- Remove llvm-cmake-devel BR
+
 * Thu Mar 24 2022 Timm Bäder <tbaeder@redhat.com> - 14.0.0-1
 - Update to 14.0.0
 
