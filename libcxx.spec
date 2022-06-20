@@ -2,13 +2,13 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 
-%global libcxx_version 14.0.0
+%global libcxx_version 14.0.5
 #global rc_ver 2
 %global libcxx_srcdir libcxx-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
 Version:	%{libcxx_version}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	1%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -139,6 +139,9 @@ install -m 0644 src/include/*.h %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Mon Jun 20 2022 Timm Bäder <tbaeder@redhat.com> - 14.0.5-1
+- Update to 14.0.5
+
 * Fri Apr 29 2022 Timm Bäder <tbaeder@redhat.com> - 14.0.0-2
 - Remove llvm-cmake-devel BR
 
