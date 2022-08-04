@@ -1,0 +1,72 @@
+From e844d6741aba16cf8b9371bbcd6607b9d7992da3 Mon Sep 17 00:00:00 2001
+From: Nikita Popov <npopov@redhat.com>
+Date: Fri, 9 Sep 2022 11:15:53 +0200
+Subject: [PATCH] Use interface library for libcxx-abi-shared
+
+The libc++.so linker script generation uses the IMPORTED_LIBNAME
+target property on libcxx-abi-shared. However, libcxx-abi-shared
+is not an interface library and as such cannot have an
+IMPORTED_LIBNAME target property.
+
+Converted libcxx-abi-shared into an imported interface library
+and use IMPORTED_LIBNAME in place of IMPORTED_LOCATION. This makes
+linker script generation work correctly with system-libcxxabi.
+---
+ libcxx/cmake/Modules/HandleLibCXXABI.cmake | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/libcxx/cmake/Modules/HandleLibCXXABI.cmake b/libcxx/cmake/Modules/HandleLibCXXABI.cmake
+index e77a4156071b..c390c589617a 100644
+--- a/libcxx/cmake/Modules/HandleLibCXXABI.cmake
++++ b/libcxx/cmake/Modules/HandleLibCXXABI.cmake
+@@ -79,6 +79,11 @@ function(imported_library target kind path name)
+   set_target_properties(${target} PROPERTIES IMPORTED_LOCATION "${file}")
+ endfunction()
+ 
++function(interface_library target name)
++  add_library(${target} INTERFACE IMPORTED GLOBAL)
++  set_target_properties(${target} PROPERTIES IMPORTED_LIBNAME "${name}")
++endfunction()
++
+ # Link against a system-provided libstdc++
+ if ("${LIBCXX_CXX_ABI}" STREQUAL "libstdc++")
+   add_library(libcxx-abi-headers INTERFACE)
+@@ -86,7 +91,7 @@ if ("${LIBCXX_CXX_ABI}" STREQUAL "libstdc++")
+     "cxxabi.h;bits/c++config.h;bits/os_defines.h;bits/cpu_defines.h;bits/cxxabi_tweaks.h;bits/cxxabi_forced.h")
+   target_compile_definitions(libcxx-abi-headers INTERFACE "-DLIBSTDCXX" "-D__GLIBCXX__")
+ 
+-  imported_library(libcxx-abi-shared SHARED "${LIBCXX_CXX_ABI_LIBRARY_PATH}" stdc++)
++  interface_library(libcxx-abi-shared stdc++)
+   target_link_libraries(libcxx-abi-shared INTERFACE libcxx-abi-headers)
+ 
+   imported_library(libcxx-abi-static STATIC "${LIBCXX_CXX_ABI_LIBRARY_PATH}" stdc++)
+@@ -99,7 +104,7 @@ elseif ("${LIBCXX_CXX_ABI}" STREQUAL "libsupc++")
+     "cxxabi.h;bits/c++config.h;bits/os_defines.h;bits/cpu_defines.h;bits/cxxabi_tweaks.h;bits/cxxabi_forced.h")
+   target_compile_definitions(libcxx-abi-headers INTERFACE "-D__GLIBCXX__")
+ 
+-  imported_library(libcxx-abi-shared SHARED "${LIBCXX_CXX_ABI_LIBRARY_PATH}" supc++)
++  interface_library(libcxx-abi-shared supc++)
+   target_link_libraries(libcxx-abi-shared INTERFACE libcxx-abi-headers)
+ 
+   imported_library(libcxx-abi-static STATIC "${LIBCXX_CXX_ABI_LIBRARY_PATH}" supc++)
+@@ -133,7 +138,7 @@ elseif ("${LIBCXX_CXX_ABI}" STREQUAL "system-libcxxabi")
+   import_private_headers(libcxx-abi-headers "${LIBCXX_CXX_ABI_INCLUDE_PATHS}" "cxxabi.h;__cxxabi_config.h")
+   target_compile_definitions(libcxx-abi-headers INTERFACE "-DLIBCXX_BUILDING_LIBCXXABI")
+ 
+-  imported_library(libcxx-abi-shared SHARED "${LIBCXX_CXX_ABI_LIBRARY_PATH}" c++abi)
++  interface_library(libcxx-abi-shared c++abi)
+   target_link_libraries(libcxx-abi-shared INTERFACE libcxx-abi-headers)
+ 
+   imported_library(libcxx-abi-static STATIC "${LIBCXX_CXX_ABI_LIBRARY_PATH}" c++abi)
+@@ -154,7 +159,7 @@ elseif ("${LIBCXX_CXX_ABI}" STREQUAL "libcxxrt")
+     "cxxabi.h;unwind.h;unwind-arm.h;unwind-itanium.h")
+   target_compile_definitions(libcxx-abi-headers INTERFACE "-DLIBCXXRT")
+ 
+-  imported_library(libcxx-abi-shared SHARED "${LIBCXX_CXX_ABI_LIBRARY_PATH}" cxxrt)
++  interface_library(libcxx-abi-shared cxxrt)
+   target_link_libraries(libcxx-abi-shared INTERFACE libcxx-abi-headers)
+ 
+   imported_library(libcxx-abi-static STATIC "${LIBCXX_CXX_ABI_LIBRARY_PATH}" cxxrt)
+-- 
+2.37.2
+
