@@ -138,7 +138,7 @@ install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
-* Wed Aug 03 2021 Tom Stellard <tstellar@redhat.com> - 13.0.1-1
+* Wed Aug 03 2022 Tom Stellard <tstellar@redhat.com> - 13.0.1-1
 - 13.0.1 Release
 
 * Fri Oct 01 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-1
