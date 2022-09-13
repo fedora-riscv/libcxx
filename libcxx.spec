@@ -9,7 +9,7 @@
 
 Name:		libcxx
 Version:	%{libcxx_version}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -157,6 +157,9 @@ install -m 0644 src/include/*.h %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Tue Sep 13 2022 Nikita Popov <npopov@redhat.com> - 15.0.0-3
+- Rebuild
+
 * Tue Sep 13 2022 Nikita Popov <npopov@redhat.com> - 15.0.0-2
 - Link libc++.a against libc++abi.a
 
