@@ -9,7 +9,7 @@
 
 Name:		libcxx
 Version:	%{libcxx_version}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -102,9 +102,21 @@ common_cmake_flags="\
 
 %cmake_build
 
-# Copy result libc++.a
+# Manually link libc++.a against libc++abi.a, because the libcxx build system is currently
+# broken when system-libcxxabi is used.
+# Also place libc++.a into results-static so we can install it later.
+LIBCXX_A=`find $PWD -name libc++.a`
 mkdir results-static
-find . -name libc++.a -exec cp {} ./results-static \;
+pushd results-static
+ar -M <<EOM
+CREATE libc++.a
+ADDLIB $LIBCXX_A
+ADDLIB %{_libdir}/libc++abi.a
+SAVE
+END
+EOM
+ranlib libc++.a
+popd
 
 %cmake  -GNinja \
 	$common_cmake_flags \
@@ -145,6 +157,9 @@ install -m 0644 src/include/*.h %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Tue Sep 13 2022 Nikita Popov <npopov@redhat.com> - 15.0.0-2
+- Link libc++.a against libc++abi.a
+
 * Thu Sep 08 2022 Nikita Popov <npopov@redhat.com> - 15.0.0-1
 - Update to LLVM 15.0.0
 
