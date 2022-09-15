@@ -108,13 +108,16 @@ common_cmake_flags="\
 LIBCXX_A=`find $PWD -name libc++.a`
 mkdir results-static
 pushd results-static
+# Create thin archive
+ar cqT tmp.a $LIBCXX_A %{_libdir}/libc++abi.a
+# Convert into normal archive
 ar -M <<EOM
-CREATE libc++.a
-ADDLIB $LIBCXX_A
-ADDLIB %{_libdir}/libc++abi.a
+CREATE tmp.a
+ADDLIB tmp.a
 SAVE
 END
 EOM
+mv tmp.a libc++.a
 ranlib libc++.a
 popd
 
