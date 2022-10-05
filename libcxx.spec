@@ -7,7 +7,7 @@
 
 Name:		libcxx
 Version:	%{libcxx_version}%{?rc_ver:~rc%{rc_ver}}
-Release:	4%{?dist}
+Release:	5%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -31,6 +31,8 @@ BuildRequires:	gnupg2
 %if 0%{?rhel}
 ExcludeArch:	ppc64 ppc64le
 %endif
+
+Requires: libcxxabi%{?_isa} = %{version}-%{release}
 
 %description
 libc++ is a new implementation of the C++ standard library, targeting C++11.
@@ -57,7 +59,7 @@ libcxxabi provides low level support for a standard C++ library.
 
 %package -n libcxxabi-devel
 Summary:	Headers and libraries for libcxxabi devel
-Requires:	%{name}%{?_isa} = %{version}-%{release}
+Requires:	libcxxabi%{?_isa} = %{version}-%{release}
 
 %description -n libcxxabi-devel
 %{summary}.
@@ -145,6 +147,9 @@ mv tmp.a %{buildroot}%{_libdir}/libc++.a
 %{_libdir}/libc++abi.a
 
 %changelog
+* Wed Oct 05 2022 Nikita Popov <npopov@redhat.com> - 15.0.0-5
+- Fix libcxxabi dependencies
+
 * Wed Oct 05 2022 Nikita Popov <npopov@redhat.com> - 15.0.0-4
 - Combine with libcxxabi build
 
