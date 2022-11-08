@@ -3,13 +3,13 @@
 %global toolchain clang
 %global bootstrap 0
 
-%global libcxx_version 15.0.0
+%global libcxx_version 15.0.4
 #global rc_ver 3
 %global libcxx_srcdir libcxx-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
 Version:	%{libcxx_version}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	1%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -160,6 +160,9 @@ install -m 0644 src/include/*.h %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Tue Nov 08 2022 Nikita Popov <npopov@redhat.com> - 15.0.4-1
+- Update to LLVM 15.0.4
+
 * Tue Sep 13 2022 Nikita Popov <npopov@redhat.com> - 15.0.0-2
 - Link libc++.a against libc++abi.a
 
