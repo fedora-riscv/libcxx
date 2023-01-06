@@ -1,0 +1,87 @@
+From e911ece557b7971dc5268ec3dca70540270c6a72 Mon Sep 17 00:00:00 2001
+From: Nikita Popov <npopov@redhat.com>
+Date: Mon, 26 Sep 2022 15:42:35 +0200
+Subject: [PATCH] [libcxx] Support LIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY
+ + LIBCXX_ENABLE_ABI_LINKER_SCRIPT
+
+Currently if both LIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY (only
+applies to static library) and LIBCXX_ENABLE_ABI_LINKER_SCRIPT (only
+applies to shared library) are enabled, the former will be silently
+ignored. The shared library will use a linker script, while the
+static library fails to link libc++abi.a entirely.
+
+This is caused by what appears to be an implementation bug: The
+LIBCXX_STATICALLY_LINK_ABI_IN_*_LIBRARY options are declared as
+dependent options of LIBCXX_ENABLE_STATIC_ABI_LIBRARY, rather than
+simply using it as the default value.
+
+Of course, the combination of
+LIBCXX_STATICALLY_LINK_ABI_IN_SHARED_LIBRARY and
+LIBCXX_ENABLE_ABI_LINKER_SCRIPT still results in a cmake error,
+because these would be conflicting requests for the shared library.
+
+Differential Revision: https://reviews.llvm.org/D134644
+---
+ libcxx/CMakeLists.txt | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
+
+diff --git a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
+index 9cad2394178d..95847fb5b629 100644
+--- a/libcxx/CMakeLists.txt
++++ b/libcxx/CMakeLists.txt
+@@ -226,19 +226,19 @@ option(LIBCXX_ENABLE_STATIC_ABI_LIBRARY
+   "Use a static copy of the ABI library when linking libc++.
+    This option cannot be used with LIBCXX_ENABLE_ABI_LINKER_SCRIPT." OFF)
+ 
+-cmake_dependent_option(LIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY
+-  "Statically link the ABI library to static library" ON
+-  "LIBCXX_ENABLE_STATIC_ABI_LIBRARY" OFF)
++option(LIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY
++  "Statically link the ABI library to static library"
++  ${LIBCXX_ENABLE_STATIC_ABI_LIBRARY})
+ 
+-cmake_dependent_option(LIBCXX_STATICALLY_LINK_ABI_IN_SHARED_LIBRARY
+-  "Statically link the ABI library to shared library" ON
+-  "LIBCXX_ENABLE_STATIC_ABI_LIBRARY" OFF)
++option(LIBCXX_STATICALLY_LINK_ABI_IN_SHARED_LIBRARY
++  "Statically link the ABI library to shared library"
++  ${LIBCXX_ENABLE_STATIC_ABI_LIBRARY})
+ 
+ # Generate and install a linker script inplace of libc++.so. The linker script
+ # will link libc++ to the correct ABI library. This option is on by default
+-# on UNIX platforms other than Apple unless 'LIBCXX_ENABLE_STATIC_ABI_LIBRARY'
+-# is on. This option is also disabled when the ABI library is not specified
+-# or is specified to be "none".
++# on UNIX platforms other than Apple unless
++# 'LIBCXX_STATICALLY_LINK_ABI_IN_SHARED_LIBRARY' is on. This option is also
++# disabled when the ABI library is not specified or is specified to be "none".
+ set(ENABLE_LINKER_SCRIPT_DEFAULT_VALUE OFF)
+ if (LLVM_HAVE_LINK_VERSION_SCRIPT AND NOT LIBCXX_STATICALLY_LINK_ABI_IN_SHARED_LIBRARY
+       AND NOT LIBCXX_CXX_ABI STREQUAL "none"
+@@ -376,14 +376,6 @@ if (LLVM_USE_SANITIZER AND LIBCXX_GENERATE_COVERAGE)
+   message(FATAL_ERROR "LLVM_USE_SANITIZER cannot be used with LIBCXX_GENERATE_COVERAGE")
+ endif()
+ 
+-# Warn users that LIBCXX_ENABLE_STATIC_ABI_LIBRARY is an experimental option.
+-if (LIBCXX_ENABLE_STATIC_ABI_LIBRARY)
+-  message(WARNING "LIBCXX_ENABLE_STATIC_ABI_LIBRARY is an experimental option")
+-  if (LIBCXX_ENABLE_STATIC AND NOT Python3_EXECUTABLE)
+-    message(FATAL_ERROR "LIBCXX_ENABLE_STATIC_ABI_LIBRARY requires python but it was not found.")
+-  endif()
+-endif()
+-
+ if (LIBCXX_ENABLE_ABI_LINKER_SCRIPT)
+     if (APPLE)
+       message(FATAL_ERROR "LIBCXX_ENABLE_ABI_LINKER_SCRIPT cannot be used on APPLE targets")
+@@ -395,7 +387,7 @@ endif()
+ 
+ if (LIBCXX_STATICALLY_LINK_ABI_IN_SHARED_LIBRARY AND LIBCXX_ENABLE_ABI_LINKER_SCRIPT)
+     message(FATAL_ERROR "Conflicting options given.
+-        LIBCXX_ENABLE_STATIC_ABI_LIBRARY cannot be specified with
++        LIBCXX_STATICALLY_LINK_ABI_IN_SHARED_LIBRARY cannot be specified with
+         LIBCXX_ENABLE_ABI_LINKER_SCRIPT")
+ endif()
+ 
+-- 
+2.39.0
+
