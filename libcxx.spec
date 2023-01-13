@@ -3,7 +3,7 @@
 %global toolchain clang
 %global bootstrap 0
 
-%global libcxx_version 15.0.6
+%global libcxx_version 15.0.7
 #global rc_ver 3
 %global libcxx_srcdir libcxx-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -160,6 +160,9 @@ install -m 0644 src/include/*.h %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Fri Jan 13 2023 Nikita Popov <npopov@redhat.com> - 15.0.7-1
+- Update to LLVM 15.0.7
+
 * Tue Dec 06 2022 Nikita Popov <npopov@redhat.com> - 15.0.6-1
 - Update to LLVM 15.0.6
 
