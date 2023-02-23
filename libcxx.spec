@@ -5,7 +5,7 @@
 %undefine _include_frame_pointers
 
 %global libcxx_version 16.0.0
-%global rc_ver 1
+%global rc_ver 3
 %global libcxx_srcdir libcxx-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
 %global libcxxabi_srcdir libcxxabi-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -140,6 +140,9 @@ mv ../%{libcxxabi_srcdir} libcxxabi
 %{_libdir}/libc++abi.a
 
 %changelog
+* Thu Feb 23 2023 Tulio Magno Quites Machado Filho <tuliom@redhat.com> - 16.0.0~rc3-1
+- Update to LLVM 16.0.0 RC3
+
 * Fri Feb 10 2023 Tulio Magno Quites Machado Filho <tuliom@redhat.com> - 16.0.0~rc1-1
 - Update to LLVM 16.0.0 RC1
 
