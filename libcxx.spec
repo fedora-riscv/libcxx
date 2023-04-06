@@ -1,7 +1,12 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global toolchain clang
-%global bootstrap 0
+%global bootstrap 1
+%bcond_without bootstrap
+
+%ifarch riscv64
+%global _lto_cflags %{nil}
+%endif
 
 %global libcxx_version 15.0.7
 #global rc_ver 3
@@ -23,13 +28,13 @@ BuildRequires:	clang llvm-devel cmake llvm-static ninja-build
 # We need python3-devel for %%py3_shebang_fix
 BuildRequires:  python3-devel
 
+%if %{bootstrap} < 1
 # The static libc++ links the static abi library in as well
 BuildRequires:	libcxxabi-static
 BuildRequires:	libcxxabi-devel
-
-%if %{bootstrap} < 1
-BuildRequires:	python3
 %endif
+
+BuildRequires:	python3
 
 
 # For origin certification
@@ -160,6 +165,9 @@ install -m 0644 src/include/*.h %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Thu Apr 06 2023 Liu Yang <Yang.Liu.sn@gmail.com> - 15.0.7-1.rv64~bootstrap
+- Bootstrap for riscv64
+
 * Fri Jan 13 2023 Nikita Popov <npopov@redhat.com> - 15.0.7-1
 - Update to LLVM 15.0.7
 
